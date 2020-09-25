@@ -1,0 +1,21 @@
+# Adds namespace to all resources.
+namespace: cabpc-system
+
+bases:
+- ../../manager
+
+
+patchesJson6902:
+- target:
+    version: v1
+    group: apps
+    kind: Deployment
+    name: controller-manager
+    namespace: system
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/1/image
+      value: ["{{ .Values.image.repository }}:{{ .Values.image.tag }}"]
+    - op: replace
+      path: /spec/template/spec/containers/1/imagePullPolicy
+      value: ["{{ .Values.image.pullPolicy }}"]

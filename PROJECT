@@ -1,0 +1,23 @@
+domain: cluster.x-k8s.io
+multigroup: true
+repo: github.com/criticalstack/cluster-api-bootstrap-provider-crit
+resources:
+- group: bootstrap
+  kind: CritConfig
+  version: v1alpha1
+- group: controlplane
+  kind: CritControlPlane
+  version: v1alpha1
+- group: bootstrap
+  kind: CritConfigTemplate
+  version: v1alpha1
+- group: bootstrap
+  kind: CritConfigTemplate
+  version: v1alpha2
+- group: bootstrap
+  kind: CritConfig
+  version: v1alpha2
+- group: controlplane
+  kind: CritControlPlane
+  version: v1alpha2
+version: "2"

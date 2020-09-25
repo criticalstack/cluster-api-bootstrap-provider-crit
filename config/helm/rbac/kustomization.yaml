@@ -1,0 +1,5 @@
+# Adds namespace to all resources.
+namespace: cabpc-system
+
+bases:
+- ../../rbac
