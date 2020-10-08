@@ -1,6 +1,6 @@
 TAG ?= v0.4.0
 # Image URL to use all building/pushing image targets
-IMG ?= cscr.io/criticalstack/cluster-api-bootstrap-provider-crit:$(TAG)
+IMG ?= docker.io/criticalstack/cluster-api-bootstrap-provider-crit:$(TAG)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:crdVersions=v1"
 
@@ -80,9 +80,8 @@ CONTROLLER_GEN=$(shell which controller-gen)
 endif
 
 release: manifests
-	mkdir -p dist
-	cd config/manager && kustomize edit set image controller=${IMG}
-	kustomize build config/default > dist/manager.yaml
+	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/manager/manager_image_patch.yaml
+	kustomize build config > dist/components.yaml
 
 build-chart:
 	kustomize build config/crd > chart/crds/crds.yaml
