@@ -1,0 +1,56 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: fetch
+  image: alpine/git
+  commands:
+  - git fetch --tags
+  when:
+    branch:
+      - master
+    event:
+      - tag
+
+- name: publish-image
+  image: plugins/docker
+  settings:
+    registry: docker.io
+    repo: docker.io/criticalstack/cluster-api-bootstrap-provider-crit
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    tags:
+    - "${DRONE_TAG}"
+    - latest
+  when:
+    branch:
+      - master
+    event:
+      - tag
+
+- name: build-manifest
+  image: golang:1.13
+  environment:
+    TAG: ${DRONE_TAG}
+  commands:
+    - make release
+  when:
+    branch:
+      - master
+    event:
+      - tag
+
+- name: publish
+  image: plugins/github-release
+  settings:
+    api_key:
+      from_secret: github_token
+    files: dist/*
+  when:
+    branch:
+      - master
+    event:
+      - tag
