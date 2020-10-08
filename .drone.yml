@@ -36,7 +36,10 @@ steps:
   environment:
     TAG: ${DRONE_TAG}
   commands:
-    - make release
+    - |
+      curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+      mv ./kustomize /usr/local/bin/
+      make release
   when:
     branch:
       - main

@@ -81,6 +81,7 @@ endif
 
 release: manifests
 	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/manager/manager_image_patch.yaml
+	mkdir -p dist/
 	kustomize build config > dist/components.yaml
 
 build-chart:
