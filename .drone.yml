@@ -9,7 +9,7 @@ steps:
   - git fetch --tags
   when:
     branch:
-      - master
+      - main
     event:
       - tag
 
@@ -27,7 +27,7 @@ steps:
     - latest
   when:
     branch:
-      - master
+      - main
     event:
       - tag
 
@@ -39,7 +39,7 @@ steps:
     - make release
   when:
     branch:
-      - master
+      - main
     event:
       - tag
 
@@ -51,6 +51,6 @@ steps:
     files: dist/*
   when:
     branch:
-      - master
+      - main
     event:
       - tag
