@@ -27,6 +27,10 @@ import (
 
 type scope struct{}
 
+func (s *scope) DefaultConvert(src, dest interface{}, flags conversion.FieldMatchingFlags) error {
+	return nil
+}
+
 func (s *scope) Convert(src, dest interface{}, flags conversion.FieldMatchingFlags) error {
 	return nil
 }
