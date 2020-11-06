@@ -87,6 +87,23 @@ func PickFewest(failureDomains clusterv1.FailureDomains, machines FilterableMach
 	return pointer.StringPtr(aggregations[0].id)
 }
 
+// NPickFewest returns N failure domains with the fewest number of machines.
+func NPickFewest(failureDomains clusterv1.FailureDomains, machines FilterableMachineCollection, replicas int) []string {
+	aggregations := pick(failureDomains, machines)
+	if len(aggregations) == 0 {
+		return nil
+	}
+	sort.Sort(aggregations)
+	fds := make([]string, 0)
+	for i := 0; i < len(aggregations); i++ {
+		fds = append(fds, aggregations[i].id)
+	}
+	if len(aggregations) <= replicas {
+		return fds[:len(aggregations)]
+	}
+	return fds
+}
+
 func pick(failureDomains clusterv1.FailureDomains, machines FilterableMachineCollection) failureDomainAggregations {
 	if len(failureDomains) == 0 {
 		return failureDomainAggregations{}
