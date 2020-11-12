@@ -116,9 +116,7 @@ func (r *CritControlPlaneReconciler) reconcileControlPlane(
 		// created control plane will be spread out over failure domains
 		fds := controlPlane.NFailureDomainsWithFewestMachines(ccp.Spec.Replicas)
 		for i := 0; i < ccp.Spec.Replicas; i++ {
-			// this allows cycling through fds when replicas > fds
-			fd := fds[i%len(fds)]
-			if err := r.cloneConfigsAndGenerateMachine(ctx, cluster, ccp, bootstrapSpec, &fd); err != nil {
+			if err := r.cloneConfigsAndGenerateMachine(ctx, cluster, ccp, bootstrapSpec, fds[i]); err != nil {
 				logger.Error(err, "failed to create initial control plane Machine")
 				r.recorder.Eventf(ccp, corev1.EventTypeWarning, "FailedInitialization", "Failed to create initial control plane Machine for cluster %s/%s control plane: %v", cluster.Namespace, cluster.Name, err)
 				return ctrl.Result{}, err
