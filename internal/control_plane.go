@@ -164,11 +164,8 @@ func (c *ControlPlane) FailureDomainWithFewestMachines() *string {
 
 // NFailureDomainWithFewestMachines returns N failure domains with the fewest number of machines.
 // Used to distribute control plane replicas over several failure domains
-func (c *ControlPlane) NFailureDomainsWithFewestMachines(replicas int) []string {
-	if len(c.Cluster.Status.FailureDomains.FilterControlPlane()) == 0 {
-		return nil
-	}
-	return NPickFewest(c.FailureDomains().FilterControlPlane(), c.Machines, replicas)
+func (c *ControlPlane) NFailureDomainsWithFewestMachines(replicas int) []*string {
+	return PickNFewest(c.FailureDomains().FilterControlPlane(), c.Machines, replicas)
 }
 
 // GenerateCritConfig generates a new crit config for creating new control plane nodes.

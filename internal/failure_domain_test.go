@@ -17,6 +17,7 @@ limitations under the License.
 package internal
 
 import (
+	"github.com/onsi/gomega/types"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -92,6 +93,111 @@ func TestNewFailureDomainPicker(t *testing.T) {
 				g.Expect(fd).To(BeNil())
 			} else {
 				g.Expect(fd).To(BeElementOf(tc.expected))
+			}
+		})
+	}
+}
+
+func TestNewFailureDomainPickNFewest(t *testing.T) {
+	a := pointer.StringPtr("us-west-1a")
+	b := pointer.StringPtr("us-west-1b")
+	c := pointer.StringPtr("us-west-1c")
+	fds := clusterv1.FailureDomains{
+		*a: clusterv1.FailureDomainSpec{},
+		*b: clusterv1.FailureDomainSpec{},
+		*c: clusterv1.FailureDomainSpec{},
+	}
+	machinea := &clusterv1.Machine{Spec: clusterv1.MachineSpec{FailureDomain: a}}
+	machineb := &clusterv1.Machine{Spec: clusterv1.MachineSpec{FailureDomain: b}}
+	machinec := &clusterv1.Machine{Spec: clusterv1.MachineSpec{FailureDomain: c}}
+	machinenil := &clusterv1.Machine{Spec: clusterv1.MachineSpec{FailureDomain: nil}}
+
+	testcases := []struct {
+		name     string
+		fds      clusterv1.FailureDomains
+		machines FilterableMachineCollection
+		n        int
+		expected types.GomegaMatcher
+	}{
+		{
+			name:     "simple",
+			n:        1,
+			expected: Equal([]*string{nil}),
+		},
+		{
+			name:     "simple 3",
+			n:        3,
+			expected: Equal([]*string{nil, nil, nil}),
+		},
+		{
+			name: "machines and no failure domain",
+			machines: NewFilterableMachineCollection(
+				machinea.DeepCopy(),
+				machineb.DeepCopy(),
+				machinec.DeepCopy()),
+			n:        3,
+			expected: Equal([]*string{nil, nil, nil}),
+		},
+		{
+			name: "failure domains and no machines",
+			fds:  fds,
+			n:    2,
+			expected: Or(
+				ConsistOf([]*string{a, b}),
+				ConsistOf([]*string{b, c}),
+				ConsistOf([]*string{c, a}),
+			),
+		},
+		{
+			name: "machines in all but one failure domain",
+			fds:  fds,
+			machines: NewFilterableMachineCollection(
+				machinea.DeepCopy(),
+				machineb.DeepCopy()),
+			n: 2,
+			expected: Or(
+				ConsistOf([]*string{c, b}),
+				ConsistOf([]*string{c, a}),
+			),
+		},
+		{
+			name:     "n greater than number of failure domains",
+			fds:      fds,
+			n:        6,
+			expected: ConsistOf([]*string{a, b, c, a, b, c}),
+		},
+		{
+			name: "no failure domain specified on machine",
+			fds: clusterv1.FailureDomains{
+				*a: clusterv1.FailureDomainSpec{},
+			},
+			machines: NewFilterableMachineCollection(machinenil.DeepCopy()),
+			n:        3,
+			expected: Equal([]*string{a, a, a}),
+		},
+		{
+			name: "mismatched failure domain on machine",
+			fds: clusterv1.FailureDomains{
+				*a: clusterv1.FailureDomainSpec{},
+			},
+			machines: NewFilterableMachineCollection(
+				machineb.DeepCopy(),
+				machinec.DeepCopy(),
+			),
+			n:        3,
+			expected: Equal([]*string{a, a, a}),
+		},
+	}
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			g := NewWithT(t)
+
+			fds := PickNFewest(tc.fds, tc.machines, tc.n)
+			if tc.expected == nil {
+				g.Expect(fds).To(BeNil())
+			} else {
+				g.Expect(fds).To(tc.expected)
+				g.Expect(len(fds)).To(Equal(tc.n))
 			}
 		})
 	}
