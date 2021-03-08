@@ -87,6 +87,8 @@ github.com/cpuguy83/go-md2man/v2 v2.0.0/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsr
 github.com/creack/pty v1.1.7/go.mod h1:lj5s0c3V2DBrqTV7llrYr5NG6My20zk30Fl46Y7DoTY=
 github.com/criticalstack/crit v1.0.1 h1:nq9GiRVm7vOceni+qOyFvV3h+u937frVufp8tT9yh+s=
 github.com/criticalstack/crit v1.0.1/go.mod h1:ULOKHjqXNtCGg4sH46kYxTBje0P9mgkpV8forMVxhGk=
+github.com/criticalstack/crit v1.0.9 h1:JSHZqgk+tUfiDR6TSB57dDnrciGny9jFxzsHm1dUFcQ=
+github.com/criticalstack/crit v1.0.9/go.mod h1:ULOKHjqXNtCGg4sH46kYxTBje0P9mgkpV8forMVxhGk=
 github.com/criticalstack/e2d v0.4.14/go.mod h1:Bxbt5zWKhtA81n/YibGi8dlOdTVjNuBzy2zkbjJBf98=
 github.com/daaku/go.zipexe v1.0.0/go.mod h1:z8IiR6TsVLEYKwXAoE/I+8ys/sDkgTzSL0CLnGVd57E=
 github.com/davecgh/go-spew v0.0.0-20151105211317-5215b55f46b2/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

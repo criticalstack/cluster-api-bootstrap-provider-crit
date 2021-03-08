@@ -3,7 +3,7 @@ module github.com/criticalstack/cluster-api-bootstrap-provider-crit
 go 1.14
 
 require (
-	github.com/criticalstack/crit v1.0.1
+	github.com/criticalstack/crit v1.0.9
 	github.com/go-logr/logr v0.1.0
 	github.com/onsi/ginkgo v1.12.1
 	github.com/onsi/gomega v1.10.1
